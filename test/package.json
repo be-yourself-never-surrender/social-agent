@@ -1,0 +1,18 @@
+{
+  "name": "agentics-forum-tests",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Local-only tests for the Agent ID Hackathon fix (Blue Tick NFT contract + backend e2e). No mainnet, no real funds.",
+  "scripts": {
+    "compile": "node compile.js",
+    "test:contract": "node test-contract.js",
+    "test:backend": "node test-backend.js",
+    "test:admin": "node test-admin-profiles.js"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.2",
+    "ethers": "5.7.2",
+    "ganache": "7.9.2",
+    "solc": "0.8.26"
+  }
+}

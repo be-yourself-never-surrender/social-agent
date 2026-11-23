@@ -1,0 +1,250 @@
+<section class="page active" id="page-home">
+        <div class="page-heading nft-page-heading">
+          <div>
+            <div class="eyebrow">SOCIAL AGENT / COLLECTIBLES</div>
+            <h1>Collect your place in the network.</h1>
+            <p>Discover the collections that represent your identity and your early support for Social Agent.</p>
+          </div>
+          <div class="heading-actions">
+            <span class="tag"><i class="dot"></i> COLLECTIBLES</span>
+            <button class="btn btn-primary" type="button" data-home-tab="market"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg> Explore market</button>
+          </div>
+        </div>
+
+        <div class="home-tabs" role="tablist" aria-label="Home sections">
+          <button class="home-tab active" type="button" role="tab" aria-selected="true" data-home-tab="overview">Overview</button>
+          <button class="home-tab" type="button" role="tab" aria-selected="false" data-home-tab="market">Market</button>
+          <button class="home-tab" type="button" role="tab" aria-selected="false" data-home-tab="collection">My NFTs <span class="home-tab-count" id="home-owned-count">0</span></button>
+          <button class="home-tab" type="button" role="tab" aria-selected="false" data-home-tab="activity">Activity</button>
+          <div class="home-tabs-spacer"></div>
+          <span class="home-tabs-note">2 market collections <span>·</span> No rarity tiers</span>
+        </div>
+
+        <!-- OVERVIEW -->
+        <div class="home-view active" id="home-view-overview" role="tabpanel">
+          <section class="nft-home-hero">
+            <div class="nft-home-hero-copy">
+              <div class="hero-top"><span class="tag gold-tag">GENESIS COLLECTION</span><span class="eyebrow">SOCIAL AGENT NFTS</span></div>
+              <h2>Own the moment.<br><em>Keep your identity.</em></h2>
+              <p>Collect an Early Supporter edition, or merge four into a Social Bagger once merging opens. Two collections, each with a clear purpose.</p>
+              <div class="nft-hero-actions">
+                <button class="btn btn-primary" type="button" data-home-tab="market">Explore market <span>↗</span></button>
+                <button class="btn btn-quiet" type="button" data-scroll-home="early-supporter-section">Explore Early Supporter</button>
+              </div>
+              <div class="nft-hero-foot"><span><i class="dot"></i> SOCIAL AGENT COLLECTIBLES</span><span>BUILT FOR THE COMMUNITY</span></div>
+            </div>
+            <div class="nft-home-art-wrap" aria-label="Early Supporter collection artwork">
+              <div class="nft-art-glow"></div>
+              <img class="nft-art-img" src="/early-supporter.png" alt="Early Supporter NFT artwork" fetchpriority="high" width="1254" height="1254">
+              <div class="nft-art-float"><span class="nft-float-dot"></span><div><strong>First mint</strong><small>Free mint per wallet</small></div></div>
+            </div>
+          </section>
+
+          <div class="nft-facts-row">
+            <div class="nft-fact"><span class="eyebrow">EARLY SUPPORTER SUPPLY</span><strong>4,444</strong><small>Total collection supply</small></div>
+            <div class="nft-fact"><span class="eyebrow">FREE MINT</span><strong>First mint</strong><small>First mint free per wallet</small></div>
+            <div class="nft-fact"><span class="eyebrow">MAX ALLOCATION</span><strong>10 per wallet</strong><small>First free, then 0.005 BNB each</small></div>
+            <div class="nft-fact"><span class="eyebrow">REFERRAL BONUS</span><strong>+1 mint</strong><small>Per successful referral, up to 10 total</small></div>
+          </div>
+
+          <section class="home-section" id="early-supporter-section">
+            <div class="home-section-heading"><div><div class="eyebrow">01 / GENESIS COLLECTION</div><h2>Early Supporter</h2><p>A collectible for the people who helped Social Agent get started.</p></div><button class="text-link" type="button" data-home-market-collection="early">View market <span>↗</span></button></div>
+            <div class="early-supporter-layout">
+              <div class="early-collection-card">
+                <div class="early-card-art has-photo">
+                  <img class="early-card-img" src="/early-supporter.png" alt="Early Supporter NFT artwork" width="1254" height="1254">
+                </div>
+                <div class="early-card-meta">
+                  <div><span class="eyebrow">SOCIAL AGENT</span><h3>Early Supporter</h3><p>Limited genesis collectible · 4,444 total supply</p></div>
+                  <span class="tag gold-tag">FIRST MINT FREE</span>
+                </div>
+              </div>
+              <div class="mint-control-panel">
+                <div class="mint-panel-top"><div><div class="eyebrow">PRIMARY MINT</div><h3>Get your Early Supporter</h3></div><span class="tag green-tag">SOON</span></div>
+                <div class="mint-price-row"><div><span class="eyebrow">MINT PRICE</span><strong class="mint-price-value">0.005 BNB</strong></div><span class="mint-price-note">First mint free per wallet</span></div>
+                <div class="mint-allocation-box">
+                  <div class="allocation-head"><span>Your mint allocation</span><strong id="early-total-allocation">10</strong></div>
+                  <div class="allocation-track"><span id="early-allocation-fill" style="width:0%"></span></div>
+                  <div class="allocation-foot"><span>10 max mints</span><span id="early-referral-allocation">+0 referral mints</span></div>
+                </div>
+                <div class="mint-rules-grid">
+                  <div><span class="rule-icon free">✳</span><div><strong>First mint free</strong><small id="free-claim-status">One time per wallet</small></div></div>
+                  <div><span class="rule-icon paid">↗</span><div><strong>Paid mints</strong><small id="paid-mint-status">0.005 BNB each, max 10 per wallet</small></div></div>
+                  <div><span class="rule-icon referral">＋</span><div><strong>Referral bonus</strong><small>Each successful referral adds 1 mint, up to 10 total</small></div></div>
+                </div>
+                <div class="mint-action-stack">
+                  <button class="btn btn-primary mint-main-btn" type="button" id="claim-free-btn">Claim free mint <span>↗</span></button>
+                  <button class="btn mint-secondary-btn" type="button" id="paid-mint-btn">Mint with payment <span>↗</span></button>
+                </div>
+                <div class="mint-small-note"><span class="info-dot">i</span><span>Your first Early Supporter mint is free. Each wallet can claim the free mint once. Referral rewards add paid mint allocation, up to 10 mints total per wallet, and do not add extra free claims.</span></div>
+                <div class="mint-small-note"><span class="info-dot">i</span><span>Minting is done through your AI agent: tap a mint button to copy the prompt, then paste it to your agent. NFT contracts are not deployed yet.</span></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="bagger-section" id="social-bagger-section">
+            <div class="bagger-copy">
+              <div class="eyebrow">02 / MERGE COLLECTION</div>
+              <h2>Social Bagger</h2>
+              <p>A transferable collectible created by burning four Early Supporter NFTs. Social Bagger is not available through a direct mint.</p>
+              <div class="bagger-properties"><span><i class="bagger-check">✓</i> 4 Early Supporter → 1 Social Bagger</span><span><i class="bagger-check">✓</i> Source NFTs burned permanently</span><span><i class="bagger-check">✓</i> Transferable on Market</span></div>
+              <button class="btn btn-primary" type="button" id="merge-btn">Merge 4 Early Supporters <span>↗</span></button>
+              <div class="tiny muted" style="margin-top:10px">Merge is done through your AI agent: tap the merge button to copy the prompt, then paste it to your agent. Merge contracts are not deployed yet. Social Bagger does not exist on-chain yet. Any token using this name before the merge contract deploys is not official.</div>
+              <div style="margin-top:12px"><button class="text-link" type="button" data-home-market-collection="bagger">View market <span>↗</span></button></div>
+            </div>
+            <div class="bagger-art-wrap">
+              <img class="bagger-img" src="/social-bagger.png" alt="Social Bagger NFT artwork" width="1254" height="1254">
+              <div class="bagger-merge-note"><span class="bagger-check">✓</span><div><strong>4 → 1 merge</strong><small>No direct mint · Created through merge only</small></div></div>
+            </div>
+          </section>
+
+                    <section class="referral-nft-panel">
+            <div class="referral-nft-copy"><div class="eyebrow">GROW YOUR ALLOCATION</div><h3>Invite someone. Get one more mint.</h3><p>Each successful referral adds one additional paid Early Supporter mint allocation, up to 10 mints total per wallet. Your one-time free first mint stays limited to one.</p></div>
+            <div class="referral-nft-action"><div class="referral-nft-count"><strong id="successful-referral-count">0</strong><span>Successful referrals</span></div><div class="referral-nft-link"><input id="nft-referral-url" value="Pair your wallet to get your referral link." readonly aria-label="Referral link"/><button class="btn" type="button" id="copy-nft-referral">Copy link</button></div></div>
+            <div class="tiny muted" id="ref-note" style="display:none;margin-top:2px;grid-column:1/-1"></div>
+          </section>
+        </div>
+
+        <!-- MARKET -->
+        <div class="home-view" id="home-view-market" role="tabpanel">
+          <div class="market-title-row"><div><div class="eyebrow">SOCIAL AGENT / MARKET</div><h2>Explore collectibles</h2><p>Discover Social Agent collections and their minting and merge rules.</p></div><div class="market-status"><span class="dot"></span> COLLECTIONS</div></div>
+          <div class="market-collection-tabs" role="tablist" aria-label="Collections"><button class="market-filter active" type="button" role="tab" aria-selected="true" data-market-collection="early">Early Supporter</button><button class="market-filter" type="button" role="tab" aria-selected="false" data-market-collection="bagger">Social Bagger</button></div>
+          <section class="market-intro-card" id="market-intro-early">
+            <button class="market-intro-art" type="button" data-open-collection-detail aria-label="View Early Supporter collection"><img src="/early-supporter.png" alt="Early Supporter NFT artwork" width="1254" height="1254"></button>
+            <div class="market-intro-body">
+              <div class="market-intro-top"><span class="eyebrow">SOCIAL AGENT / GENESIS 01</span><span class="tag gold-tag">4,444 TOTAL SUPPLY</span></div>
+              <h3>Early Supporter</h3>
+              <p>The genesis collectible for the people who helped Social Agent get started. Mint from the original collection while allocation remains, or buy from another holder once secondary trading opens.</p>
+              <div class="market-intro-stats">
+                <div><span>FREE MINT</span><strong>First mint</strong></div>
+                <div><span>MAX PER WALLET</span><strong>10</strong></div>
+                <div><span>RARITY</span><strong>Not used</strong></div>
+              </div>
+              <div style="margin-top:17px"><button class="btn btn-primary btn-small" type="button" data-open-collection-detail>View collection <span>↗</span></button></div>
+            </div>
+          </section>
+          <section class="market-intro-card" id="market-intro-bagger" hidden>
+            <button class="market-intro-art" type="button" data-open-collection-detail data-collection="bagger" aria-label="View Social Bagger collection"><img src="/social-bagger.png" alt="Social Bagger NFT artwork" width="1254" height="1254"></button>
+            <div class="market-intro-body">
+              <div class="market-intro-top"><span class="eyebrow">SOCIAL AGENT / MERGE 02</span><span class="tag gold-tag">4 → 1 MERGE</span></div>
+              <h3>Social Bagger</h3>
+              <p>A transferable collectible created by burning four Early Supporter NFTs. Collectors can acquire one by merging, or buy an existing token from its current holder.</p>
+              <div class="market-intro-stats">
+                <div><span>MERGE RATIO</span><strong>4 ES → 1 SB</strong></div>
+                <div><span>SOURCE NFT</span><strong>Burned permanently</strong></div>
+                <div><span>TRADING</span><strong>Transferable</strong></div>
+              </div>
+              <div style="margin-top:17px"><button class="btn btn-primary btn-small" type="button" data-open-collection-detail data-collection="bagger">View collection <span>↗</span></button></div>
+            </div>
+          </section>
+          <div class="market-toolbar">
+            <label class="market-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="market-search" type="search" placeholder="Search collections or items..."/></label>
+          </div>
+          <div class="market-grid" id="market-grid">
+            <article class="market-item-card" data-market-card data-kind="early" data-search="early supporter genesis social agent free mint 4444">
+              <button class="market-item-art early-market-art has-photo" type="button" data-open-collection-detail aria-label="View Early Supporter collection"><img src="/early-supporter.png" alt="Early Supporter NFT artwork" width="1254" height="1254"></button>
+              <div class="market-item-content"><div class="market-item-title"><div><span class="eyebrow">SOCIAL AGENT</span><h3>Early Supporter</h3></div><span class="collection-symbol">SA</span></div><div class="market-item-info"><span>Supply <strong>4,444</strong></span><span>First mint free</span></div><div class="market-item-bottom"><span class="market-item-price"><small>PRIMARY MINT</small><strong>0.005 BNB</strong></span><button class="btn btn-small btn-primary" type="button" data-open-collection-detail>View collection</button></div></div>
+            </article>
+            <article class="market-item-card" data-market-card data-kind="bagger" data-search="social bagger merge transferable burn">
+              <button class="market-item-art bagger-market-art has-photo" type="button" data-open-collection-detail data-collection="bagger" aria-label="View Social Bagger collection"><img src="/social-bagger.png" alt="Social Bagger NFT artwork" width="1254" height="1254"></button>
+              <div class="market-item-content"><div class="market-item-title"><div><span class="eyebrow">SOCIAL AGENT</span><h3>Social Bagger</h3></div><span class="collection-symbol">SB</span></div><div class="market-item-info"><span>Merge only</span><span>Transferable</span></div><div class="market-item-bottom"><span class="market-item-price"><small>CREATION</small><strong>4 ES burned</strong></span><button class="btn btn-small btn-primary" type="button" data-open-collection-detail data-collection="bagger">View collection</button></div></div>
+            </article>
+          </div>
+          <div class="market-empty" id="market-empty" hidden><div class="market-empty-icon">⌕</div><h3>No collections found</h3><p>Try another name or clear the selected filter.</p><button class="btn" type="button" id="market-clear">Clear filters</button></div>
+          <section class="fee-card">
+            <div class="fee-card-head"><div class="eyebrow">MARKETPLACE FEES</div><h3>Fees</h3></div>
+            <div class="fee-row">
+              <div class="fee-row-top"><strong>First listing</strong><span class="fee-amount">0.00025 BNB</span></div>
+              <p>Charged once per collection per wallet. Further listings of the same collection are free.</p>
+              <div class="fee-splitbar"><span class="fee-split-dev" style="width:60%"></span><span class="fee-split-liq" style="width:15%"></span><span class="fee-split-treasury" style="width:15%"></span><span class="fee-split-vault" style="width:10%"></span></div>
+              <div class="fee-split-legend"><span><i class="fee-dot fee-split-dev"></i>60% dev wallet</span><span><i class="fee-dot fee-split-liq"></i>15% token liquidity</span><span><i class="fee-dot fee-split-treasury"></i>15% treasury</span><span><i class="fee-dot fee-split-vault"></i>10% Social Bagger Vault</span></div>
+            </div>
+            <div class="fee-row">
+              <div class="fee-row-top"><strong>Sale fee</strong><span class="fee-amount">2.5%</span></div>
+              <p>2.5% of the sale price, taken from seller proceeds. The buyer pays the listed price plus gas only.</p>
+              <div class="fee-splitbar"><span class="fee-split-liq" style="width:70%"></span><span class="fee-split-dev" style="width:20%"></span><span class="fee-split-treasury" style="width:5%"></span><span class="fee-split-vault" style="width:5%"></span></div>
+              <div class="fee-split-legend"><span><i class="fee-dot fee-split-liq"></i>70% token liquidity</span><span><i class="fee-dot fee-split-dev"></i>20% dev wallet</span><span><i class="fee-dot fee-split-treasury"></i>5% treasury</span><span><i class="fee-dot fee-split-vault"></i>5% Social Bagger Vault</span></div>
+            </div>
+            <p class="fee-vault-note">Social Bagger Vault receives 10% of listing fees and 5% of sale fees. Distribution to Social Bagger holders is not decided yet.</p>
+          </section>
+          <div class="market-disclaimer"><span class="info-dot">i</span><span>Live listings, ownership, floor prices, and transaction history will appear when marketplace contracts and indexing are connected. No rarity tiers are used in these collections.</span></div>
+        </div>
+
+        <div class="home-view" id="home-view-detail" role="tabpanel">
+          <button class="market-detail-back" type="button" id="back-to-market">← Back to Market</button>
+          <div id="detail-early-block">
+          <section class="market-detail-hero">
+            <img class="market-detail-art" src="/early-supporter.png" alt="Early Supporter NFT artwork" width="1254" height="1254">
+            <div class="market-detail-copy">
+              <div class="eyebrow">SOCIAL AGENT / GENESIS COLLECTION</div>
+              <h2>Early Supporter</h2>
+              <p>A permanent piece of Social Agent's beginning. The collection has a fixed supply of 4,444. The first mint is free, with one free claim per wallet and referral rewards adding paid mint allocation, up to 10 mints total per wallet.</p>
+              <div class="market-detail-stats">
+                <div class="market-detail-stat"><span>TOTAL SUPPLY</span><strong>4,444</strong></div>
+                <div class="market-detail-stat"><span>FIRST MINT</span><strong>Free</strong></div>
+                <div class="market-detail-stat"><span>MAX PER WALLET</span><strong>10</strong></div>
+              </div>
+              <div class="market-detail-actions"><button class="btn btn-primary btn-small" type="button" id="detail-primary-mint">Mint from collection</button><span class="tiny muted">Mint price: 0.005 BNB · First mint free</span></div>
+            </div>
+          </section>
+          <div class="market-section-heading">
+            <div><div class="eyebrow">SECONDARY MARKET</div><h3>Listed by holders</h3><p>Buy an existing token from another collector.</p></div>
+            <span class="tag">0 LISTINGS</span>
+          </div>
+          <div class="market-empty-listings"><div class="market-empty-icon">⌕</div><h3>No live listings yet</h3><p>Secondary trading opens when marketplace contracts deploy. Listings, prices, and ownership will appear here then.</p></div>
+          </div>
+          <div id="detail-bagger-block" hidden>
+          <section class="market-detail-hero">
+            <img class="market-detail-art" src="/social-bagger.png" alt="Social Bagger NFT artwork" width="1254" height="1254">
+            <div class="market-detail-copy">
+              <div class="eyebrow">SOCIAL AGENT / MERGE COLLECTION</div>
+              <h2>Social Bagger</h2>
+              <p>A transferable collectible created by burning four Early Supporter NFTs. Social Bagger is not available through a direct mint, but it is transferable and can be traded on the secondary market.</p>
+              <div class="market-detail-stats">
+                <div class="market-detail-stat"><span>MERGE RATIO</span><strong>4 → 1</strong></div>
+                <div class="market-detail-stat"><span>SOURCE NFT</span><strong>Burned permanently</strong></div>
+                <div class="market-detail-stat"><span>TRADING</span><strong>Transferable</strong></div>
+              </div>
+              <div class="market-detail-actions"><button class="btn btn-primary btn-small" type="button" id="detail-merge-btn">Merge 4 Early Supporters</button><span class="tiny muted">Merge contracts are not deployed yet. Merge is done through your AI agent: tap to copy the prompt. No direct mint · Created through merge only</span></div>
+            </div>
+          </section>
+          <div class="market-section-heading">
+            <div><div class="eyebrow">SECONDARY MARKET</div><h3>Social Bagger listed by holders</h3><p>Buy an existing Social Bagger token from another collector.</p></div>
+            <span class="tag">0 LISTINGS</span>
+          </div>
+          <div class="market-empty-listings"><div class="market-empty-icon">⌕</div><h3>No live listings yet</h3><p>Secondary trading opens when marketplace contracts deploy. Listings, prices, and ownership will appear here then.</p></div>
+          </div>
+          <section class="fee-card">
+            <div class="fee-card-head"><div class="eyebrow">MARKETPLACE FEES</div><h3>Fees</h3></div>
+            <div class="fee-row">
+              <div class="fee-row-top"><strong>First listing</strong><span class="fee-amount">0.00025 BNB</span></div>
+              <p>Charged once per collection per wallet. Further listings of the same collection are free.</p>
+              <div class="fee-splitbar"><span class="fee-split-dev" style="width:60%"></span><span class="fee-split-liq" style="width:15%"></span><span class="fee-split-treasury" style="width:15%"></span><span class="fee-split-vault" style="width:10%"></span></div>
+              <div class="fee-split-legend"><span><i class="fee-dot fee-split-dev"></i>60% dev wallet</span><span><i class="fee-dot fee-split-liq"></i>15% token liquidity</span><span><i class="fee-dot fee-split-treasury"></i>15% treasury</span><span><i class="fee-dot fee-split-vault"></i>10% Social Bagger Vault</span></div>
+            </div>
+            <div class="fee-row">
+              <div class="fee-row-top"><strong>Sale fee</strong><span class="fee-amount">2.5%</span></div>
+              <p>2.5% of the sale price, taken from seller proceeds. The buyer pays the listed price plus gas only.</p>
+              <div class="fee-splitbar"><span class="fee-split-liq" style="width:70%"></span><span class="fee-split-dev" style="width:20%"></span><span class="fee-split-treasury" style="width:5%"></span><span class="fee-split-vault" style="width:5%"></span></div>
+              <div class="fee-split-legend"><span><i class="fee-dot fee-split-liq"></i>70% token liquidity</span><span><i class="fee-dot fee-split-dev"></i>20% dev wallet</span><span><i class="fee-dot fee-split-treasury"></i>5% treasury</span><span><i class="fee-dot fee-split-vault"></i>5% Social Bagger Vault</span></div>
+            </div>
+            <p class="fee-vault-note">Social Bagger Vault receives 10% of listing fees and 5% of sale fees. Distribution to Social Bagger holders is not decided yet.</p>
+          </section>
+          <div class="market-disclaimer"><span class="info-dot">i</span><span>Live listings, ownership, floor prices, and transaction history will appear when marketplace contracts and indexing are connected.</span></div>
+        </div>
+
+        <!-- MY NFTS -->
+        <div class="home-view" id="home-view-collection" role="tabpanel">
+          <div class="market-title-row"><div><div class="eyebrow">YOUR COLLECTION</div><h2>My NFTs</h2><p>Collectibles associated with your connected wallet.</p></div><div class="market-title-actions"><button class="btn" type="button" id="sell-nft-btn">Sell NFT</button><button class="btn" type="button" data-home-tab="market">Explore market <span>↗</span></button></div></div>
+          <div class="fee-note"><span class="info-dot">i</span><span>First listing per collection costs 0.00025 BNB, then free. Sales pay 2.5% from seller proceeds.</span></div>
+          <div class="collection-summary-row"><div><span class="eyebrow">TOTAL ITEMS</span><strong id="my-nft-total">0</strong></div><div><span class="eyebrow">EARLY SUPPORTER</span><strong id="my-early-count">0</strong></div><div><span class="eyebrow">SOCIAL BAGGER</span><strong id="my-bagger-count">0</strong></div></div>
+          <div class="my-nft-empty" id="my-nft-pair-hint" hidden><div class="my-nft-empty-art"><div class="empty-nft-mark">SA</div></div><h3>Pair your wallet to see your collection.</h3><p>Connect through Binance App to load the collectibles held by your wallet.</p><button class="btn btn-primary" type="button" id="my-nft-pair">Pair wallet</button></div>
+          <div class="my-nft-empty" id="my-nft-empty"><div class="my-nft-empty-art"><div class="empty-nft-mark">SA</div></div><h3>Your collection starts here.</h3><p>You don't own any Social Agent collectibles yet. Early Supporter minting opens after deployment. Social Bagger is created by merging four Early Supporter NFTs after deployment.</p><button class="btn btn-primary" type="button" data-home-tab="market">Explore market <span>↗</span></button></div>
+          <div class="market-grid owned-nft-grid" id="my-nft-grid" hidden></div>
+          <div class="merge-panel" id="merge-panel"><div class="merge-panel-head"><div><div class="eyebrow">MERGE</div><h3>Merge Early Supporters</h3><p>Select exactly four Early Supporters to merge into one Social Bagger.</p></div><span class="merge-count"><span id="merge-selected-count">0</span>/4 selected</span></div><div class="merge-panel-actions"><button class="btn btn-primary" type="button" id="merge-selected-btn" disabled>Merge selected</button><span class="tiny muted">Merge is done through your AI agent: tap to copy the prompt.</span></div></div>
+        </div>
+              <div class="home-view" id="home-view-activity" role="tabpanel">
+          <div class="market-title-row"><div><div class="eyebrow">ON-CHAIN HISTORY</div><h2>Activity</h2><p>Mint, merge, listing, and purchase events for your wallet will appear here once marketplace contracts deploy and events are indexed.</p></div></div>
+          <div class="market-empty-listings"><div class="market-empty-icon">⌕</div><h3>No activity yet</h3><p>Activity history will be indexed from BNB Smart Chain events after deployment. Nothing is recorded here until then.</p></div>
+        </div>
+</section>

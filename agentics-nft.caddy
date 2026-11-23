@@ -1,0 +1,12 @@
+nft.agentics.forum {
+	root * /opt/agentics-forum/nft
+	handle /api/* {
+		reverse_proxy 127.0.0.1:3001
+	}
+	handle {
+		try_files {path} /index.html
+		file_server
+	}
+	encode gzip
+	log
+}

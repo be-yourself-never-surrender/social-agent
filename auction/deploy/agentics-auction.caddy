@@ -1,0 +1,13 @@
+auction.agentics.forum {
+	root * /opt/agentics-forum/auction
+	handle /docs* {
+		rewrite * /docs.html
+		file_server
+	}
+	handle {
+		try_files {path} /index.html
+		file_server
+	}
+	encode gzip
+	log
+}

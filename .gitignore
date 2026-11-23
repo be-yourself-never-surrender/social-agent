@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+backend/node_modules/
+test/node_modules/
+auction/**/node_modules/
+
+# Build & test artifacts
+__pycache__/
+*.pyc
+test/artifacts/
+test/tmp-e2e/
+
+# Runtime data & uploads (never commit live user data or secrets)
+backend/social.json
+backend/blue-tick.json
+backend/referrals.json
+backend/vouchers.json
+backend/profiles.json
+backend/sessions.json
+backend/uploads/
+*.sqlite
+*.db
+
+# Secrets & environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local scratch & OS artifacts
+*.log
+*.tar.gz
+*.zip
+media-generation-*
+.DS_Store
+Thumbs.db

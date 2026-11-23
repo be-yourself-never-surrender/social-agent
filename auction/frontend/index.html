@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auction | Social Agent Token Sale</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Token Auction</h1>
+  <p>100 tables per day, 5 days. Highest bid per table wins a 400,000 token lot and pays its own bid in full.</p>
+</header>
+<div class="banner">Prototype build. Not open. Demo funds only. No contracts yet. Rules enforced here will move into contracts before launch.</div>
+<main>
+  <div class="card">
+    <h2>My seat</h2>
+    <div class="row">
+      <input id="handle" placeholder="handle, for example anjing.ai" value="">
+      <button id="setHandle">Set handle</button>
+      <button id="claimAll" class="secondary">Claim all refunds</button>
+    </div>
+    <p id="userLine" class="muted">Set a handle to see your balance, bids, wins and suspension status.</p>
+    <div id="userStats"></div>
+  </div>
+
+  <div class="card">
+    <h2 id="roundTitle">Round</h2>
+    <div id="roundStats"></div>
+    <div class="row" style="margin-top:10px">
+      <button id="filterAll" class="secondary">All tables</button>
+      <button id="filterMine" class="secondary">My tables</button>
+      <button id="filterOpen" class="secondary">Open tables</button>
+      <button id="refresh" class="secondary">Refresh</button>
+    </div>
+  </div>
+
+  <div id="tables" class="grid"></div>
+
+  <div class="card">
+    <h2>Distributor claims</h2>
+    <p class="muted">Winner tokens are held in one distributor contract per day and become claimable only when listing opens. Listing is currently closed in this prototype.</p>
+    <div id="distLine"></div>
+  </div>
+
+  <div class="card">
+    <h2>How it works</h2>
+    <ul>
+      <li>Each day offers 100 tables of 400,000 tokens. Each table is its own first price auction.</li>
+      <li>Next day opening bid equals the average of all closing prices from the previous day. Bids move in steps of 10 percent of the opening bid, rounded up.</li>
+      <li>One wallet may hold top bids on at most 2 tables at once. After 2 total wins, that wallet sits out the next 3 rounds, then returns with 1 table.</li>
+      <li>Bids are escrowed in USDT and cannot be cancelled. If you are outbid, claim your USDT at once or top up to retake the lead.</li>
+      <li>At each daily close, losers can claim USDT. Winners are recorded and their tokens are held by that day distributor until listing. No buyer protection: overbidding is the bidder's own fault.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Trust</h2>
+    <ul>
+      <li>Contract code will be public and verified. Status: TBD.</li>
+      <li>No claim function to the dev wallet exists in the distributor or liquidator contracts. Only winners can claim tokens. USDT only flows into the locked pool.</li>
+      <li>Liquidity pool tokens are burned permanently. No unlock date.</li>
+      <li>Operational gas for liquidity and contract transfers is paid from the dev personal wallet, never from user funds.</li>
+      <li>Post launch trading tax: buy 1 percent, sell 2 percent. Split: 50 percent dev, 30 percent buy back and burn, 20 percent treasury. Treasury use: TBD.</li>
+      <li>NFT trading fee: 2.5 percent from seller proceeds. Split: 70 percent token liquidity, 20 percent dev, 10 percent treasury.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Prototype admin</h2>
+    <p class="muted">Demo only. In production, rounds close by contract time, not by button.</p>
+    <div class="row">
+      <button id="closeRound" class="warn">Close current round</button>
+      <button id="openListing" class="secondary">Open listing</button>
+      <button id="resetDemo" class="warn">Reset demo state</button>
+    </div>
+  </div>
+
+  <div class="card"><h2>Messages</h2><p id="msg" class="muted">Ready.</p></div>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

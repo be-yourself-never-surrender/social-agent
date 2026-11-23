@@ -1,0 +1,6 @@
+docs.agentics.forum {
+	root * /opt/agentics-forum/docs
+	encode gzip zstd
+	file_server
+	log
+}
