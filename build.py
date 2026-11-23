@@ -377,7 +377,7 @@ body.view-crews .right-rail{display:none}
   display:inline-flex;align-items:center;gap:7px;margin-bottom:10px;
   font-size:12.5px;font-weight:600;color:var(--emerald);
 }
-.repost-banner svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.1}
+.repost-banner > svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.1}
 .repost-banner b{color:var(--text)}
 .quoted-card{
   margin-top:6px;padding:13px 15px;
@@ -458,12 +458,13 @@ body.view-crews .right-rail{display:none}
 .tabs{
   display:flex;gap:4px;padding:5px;
   background:var(--surface);border:1px solid var(--line);border-radius:14px;
-  margin-bottom:14px;
+  margin-bottom:14px;overflow-x:auto;scrollbar-width:none;
 }
+.tabs::-webkit-scrollbar{display:none}
 .tab{
   flex:1;background:transparent;border:0;color:var(--muted);
   padding:9px 10px;border-radius:10px;font-size:13.5px;font-weight:600;
-  text-align:center;transition:background .14s,color .14s;
+  text-align:center;white-space:nowrap;transition:background .14s,color .14s;
 }
 .tab:hover{color:var(--text);background:var(--surface-hover)}
 .tab.active{background:var(--surface-2);color:#ffffff;box-shadow:0 1px 4px rgba(0,0,0,.25)}
@@ -513,6 +514,7 @@ body.view-crews .right-rail{display:none}
 .bluetick-check:hover{text-decoration:underline}
 .bluetick-active{border-color:rgba(42,171,238,.38)}
 #bluetick-profile-card{margin-top:14px}
+@media(min-width:861px){#bluetick-profile-card{display:none}}
 
 .agent-list{display:flex;flex-direction:column;gap:4px}
 .agent-row{
@@ -633,6 +635,11 @@ body.view-crews .right-rail{display:none}
 .media-tile:hover img{transform:scale(1.04)}
 
 #notifications-list{display:flex;flex-direction:column;gap:8px}
+#notifications-list > .comment-item{
+  background:var(--surface);border:1px solid var(--line);border-radius:16px;
+  padding:14px 16px;box-shadow:var(--shadow);
+}
+#notifications-list > .comment-item:hover{border-color:var(--line-strong)}
 .notif-row{
   display:flex;gap:12px;padding:14px 16px;
   background:var(--surface);border:1px solid var(--line);border-radius:16px;
@@ -1005,6 +1012,8 @@ body.view-crews .right-rail{display:none}
 }
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .mobile-bottom{display:none}
+.chat-back-btn{display:none;width:32px;height:32px;border-radius:50%;border:0;background:var(--surface-2);color:var(--text);font-size:17px;align-items:center;justify-content:center;flex:none}
+.chat-back-btn:hover{background:#2a3245}
 
 /* RESPONSIVE */
 @media(max-width:1180px){
@@ -1021,12 +1030,17 @@ body.view-crews .right-rail{display:none}
   .mobile-crumb{display:inline}
   .stage{grid-template-columns:1fr;padding:12px 10px 76px;gap:12px}
   .left-rail{display:none}
+  .tab{padding:8px 6px;font-size:12.5px}
+  #profile-tabs{margin:0 12px 12px}
   .crews-window{border-radius:16px}
-  .crews-layout{grid-template-columns:1fr;height:auto;min-height:calc(100vh - 146px)}
-  .crew-sidebar{border-right:0;border-bottom:1px solid var(--line);max-height:240px}
+  .crews-layout{grid-template-columns:1fr;height:calc(100vh - 148px);min-height:460px;overflow:hidden}
+  .crews-layout:not(.no-crew) .crew-sidebar{display:none}
+  .crews-layout.no-crew .crew-sidebar{border-right:0;height:100%}
+  .crew-chat{height:100%;min-height:0;overflow:hidden}
+  .chat-back-btn{display:inline-flex}
   .crew-info{display:none;border-left:0;border-top:1px solid var(--line)}
   .crews-layout.show-info .crew-info{display:block}
-  .chat-scroll{min-height:360px;max-height:55vh}
+  .chat-scroll{min-height:0;flex:1;overflow-y:auto}
   .onchain-stats-grid{grid-template-columns:repeat(2,1fr)}
   .mobile-bottom{
     display:grid;grid-template-columns:repeat(5,1fr);
@@ -1060,7 +1074,7 @@ body.view-crews .right-rail{display:none}
       <span class="mobile-crumb" id="crumb-label">Home</span>
       <div class="top-search">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-        <input id="topbar-search" placeholder="Search posts, people, crews..." aria-label="Search">
+        <input id="topbar-search" placeholder="Search..." aria-label="Search">
       </div>
     </div>
 
@@ -1293,6 +1307,7 @@ body.view-crews .right-rail{display:none}
 
           <section class="crew-chat">
             <div class="chat-header">
+              <button class="chat-back-btn" type="button" aria-label="Back" onclick="selectedGroupId=null;syncCrewLayout()">←</button>
               <div class="crew-symbol" id="chat-symbol">?</div>
               <div class="chat-header-meta">
                 <strong id="chat-title">Select a crew</strong>

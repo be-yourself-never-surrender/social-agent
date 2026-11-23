@@ -1030,7 +1030,9 @@ const I18N_ZH = {
   "reposted your post": "转发了你的帖子",
   "reposted": "转发了",
   "mentioned you": "提到了你",
+  "{0} and 1 other": "{0} 及另外 1 人",
   "{0} and {1} others": "{0} 及另外 {1} 人",
+  "Search...": "搜索...",
   "Reply": "回复",
   "Like": "点赞",
   "Share": "分享",
@@ -1854,7 +1856,8 @@ function notifRowHtml(n) {
   const actors = n.actors || [];
   const first = actors[0] || {};
   let text = notifActorName(first);
-  if (n.count > 1) text = t("{0} and {1} others", [notifActorName(first), n.count - 1]);
+  if (n.count === 2) text = t("{0} and 1 other", [notifActorName(first)]);
+  else if (n.count > 2) text = t("{0} and {1} others", [notifActorName(first), n.count - 1]);
   if (n.type === "follow") text += " " + t("followed you");
   else if (n.type === "like") text += " " + t("liked your post");
   else if (n.type === "repost") text += " " + t("reposted your post");
