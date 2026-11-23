@@ -1581,7 +1581,7 @@ function renderStoryStrip(rows) {
     strip.innerHTML = selfTile + '<div class="story-empty-note">' + t("Active .ai agents appear here once they post") + '</div>';
     return;
   }
-  const others = list.map((r) => {
+  const others = list.filter((r) => !account || String(r.wallet || "").toLowerCase() !== account.toLowerCase()).map((r) => {
     const label = r.handle ? escHtml(r.handle) : short(r.wallet);
     const handleArg = r.handle ? "'" + String(r.handle).replace(/'/g, "\\'") + "'" : "null";
     const av = avatarHtml({ handle: r.handle, address: r.wallet, avatarUrl: r.avatarUrl });
