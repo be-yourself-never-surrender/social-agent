@@ -774,7 +774,7 @@ body.view-crews .right-rail{display:none}
 .lightbox.open{display:flex;animation:fadeUp .14s ease}
 .lightbox img{
   max-width:min(92vw,1120px);max-height:86vh;
-  border-radius:14px;object-fit:contain;
+  border-radius:14px;object-fit:contain;background:#0b0e14;
   box-shadow:0 24px 80px rgba(0,0,0,.75);
   border:1px solid rgba(255,255,255,.1);
 }
@@ -1014,6 +1014,8 @@ body.view-crews .right-rail{display:none}
 .mobile-bottom{display:none}
 .chat-back-btn{display:none;width:32px;height:32px;border-radius:50%;border:0;background:var(--surface-2);color:var(--text);font-size:17px;align-items:center;justify-content:center;flex:none}
 .chat-back-btn:hover{background:#2a3245}
+.info-back-btn{display:none;align-items:center;gap:6px;margin-bottom:12px;border:1px solid var(--line-strong);background:var(--surface-2);color:var(--text);border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:600}
+.info-back-btn:hover{background:#2a3245}
 
 /* RESPONSIVE */
 @media(max-width:1180px){
@@ -1038,8 +1040,10 @@ body.view-crews .right-rail{display:none}
   .crews-layout.no-crew .crew-sidebar{border-right:0;height:100%}
   .crew-chat{height:100%;min-height:0;overflow:hidden}
   .chat-back-btn{display:inline-flex}
-  .crew-info{display:none;border-left:0;border-top:1px solid var(--line)}
-  .crews-layout.show-info .crew-info{display:block}
+  .crew-info{display:none;border-left:0;border-top:0}
+  .crews-layout.show-info .crew-chat{display:none}
+  .crews-layout.show-info .crew-info{display:block;height:100%;overflow-y:auto}
+  .info-back-btn{display:inline-flex}
   .chat-scroll{min-height:0;flex:1;overflow-y:auto}
   .onchain-stats-grid{grid-template-columns:repeat(2,1fr)}
   .mobile-bottom{
@@ -1307,7 +1311,7 @@ body.view-crews .right-rail{display:none}
 
           <section class="crew-chat">
             <div class="chat-header">
-              <button class="chat-back-btn" type="button" aria-label="Back" onclick="selectedGroupId=null;syncCrewLayout()">←</button>
+              <button class="chat-back-btn" type="button" aria-label="Back" onclick="selectedGroupId=null;document.getElementById('crews-layout').classList.remove('show-info');syncCrewLayout()">←</button>
               <div class="crew-symbol" id="chat-symbol">?</div>
               <div class="chat-header-meta">
                 <strong id="chat-title">Select a crew</strong>
@@ -1331,6 +1335,7 @@ body.view-crews .right-rail{display:none}
           </section>
 
           <aside class="crew-info" id="crew-info-panel">
+            <button class="info-back-btn" type="button" onclick="document.getElementById('crews-layout').classList.remove('show-info')">← <span>Back to chat</span></button>
             <div class="crew-info-top">
               <div class="crew-symbol" id="info-symbol">?</div>
               <div class="crew-info-heading"><h3 id="info-title">Select a crew</h3><p id="info-desc">Pick a crew from the list, or create one.</p></div>
@@ -1446,9 +1451,9 @@ body.view-crews .right-rail{display:none}
   <div class="modal">
     <div class="modal-head"><h3>Create a Crew</h3><button class="close" data-close aria-label="Close">×</button></div>
     <label class="field-label">CREW NAME</label>
-    <input class="field" id="new-crew-name" placeholder="e.g. Design Circle" maxlength="32"/>
+    <input class="field" id="new-crew-name" placeholder="e.g. Design Circle" maxlength="40"/>
     <label class="field-label" style="margin-top:12px">DESCRIPTION (OPTIONAL)</label>
-    <textarea class="field" id="new-crew-desc" placeholder="What is this room for?" rows="3" maxlength="120" style="resize:vertical"></textarea>
+    <textarea class="field" id="new-crew-desc" placeholder="What is this room for?" rows="3" maxlength="200" style="resize:vertical"></textarea>
     <div class="notice">Your Crew is private. People can join only through an invitation link or code.</div>
     <div class="modal-actions"><button class="btn btn-small" data-close>Cancel</button><button class="btn btn-wa btn-small" id="create-crew">Create Crew</button></div>
   </div>

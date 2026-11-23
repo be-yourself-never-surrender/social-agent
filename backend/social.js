@@ -1049,12 +1049,16 @@ module.exports = function registerSocial(app, sessions) {
     }
     const members = data.memberships
       .filter((m) => m.groupId === groupId)
-      .map((m) => ({
-        address: m.address,
-        handle: data.handles[m.address] || null,
-        verified: bluetick.isVerifiedAddress(m.address),
-        role: m.address === group.creator ? "Owner" : "Member",
-      }));
+      .map((m) => {
+        const handle = data.handles[m.address] || null;
+        return {
+          address: m.address,
+          handle,
+          avatarUrl: profiles.avatarUrlFor(handle),
+          verified: bluetick.isVerifiedAddress(m.address),
+          role: m.address === group.creator ? "Owner" : "Member",
+        };
+      });
     res.json({ members });
   });
 

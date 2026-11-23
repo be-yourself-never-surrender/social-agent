@@ -9,7 +9,7 @@ const REGISTRY_ABI = ["function handleOf(address) view returns (string)"];
 const ZERO = "0x0000000000000000000000000000000000000000";
 const MAX_TEXT = 500;
 
-let account = null, hasAgent = false, myHandle = null;
+let account = null, hasAgent = false, myHandle = null, myAvatarUrl = null;
 let bawSessionId = null, linkReferrer = null, linkReferrerLabel = null;
 let pairingLive = null;
 const likedIds = new Set(), repostedIds = new Set(), savedPostIds = new Set();
@@ -514,7 +514,9 @@ async function saveEditPost(id, btn) {
       const body = card.querySelector(".post-body");
       if (body) { body.innerHTML = linkify(text); body.style.display = ""; }
       const time = card.querySelector(".post-time");
-      if (time && !time.querySelector(".edited-label")) time.insertAdjacentHTML("beforeend", ' · <span class="edited-label">' + t("Edited") + '</span>');
+      if (time && !card.querySelector(".edited-label")) {
+        time.insertAdjacentHTML("afterend", '<span class="post-dot">·</span><span class="edited-label">' + t("Edited") + '</span>');
+      }
       const eb = card.querySelector(".post-edit-box");
       if (eb) eb.remove();
     });
@@ -1023,6 +1025,7 @@ const I18N_ZH = {
   "{0} posts": "{0} 篇帖子",
   "{0} followers": "{0} 位粉丝",
   "score": "积分",
+  "post": "篇帖子",
   "posts": "篇帖子",
   "Trending with": "相关讨论",
   "followed you": "关注了你",
@@ -1130,6 +1133,7 @@ const I18N_ZH = {
   "Could not update bio.": "无法更新简介。",
   "Add a short bio (max 160 chars)...": "添加简短个人简介（最多 160 字）...",
   "Bio must be 160 characters or fewer.": "简介不能超过 160 个字符。",
+  "Back to chat": "返回聊天",
 };
 function t(s, subs, ctx) {
   if (typeof subs === "string") { ctx = subs; subs = []; }
@@ -1239,7 +1243,7 @@ function switchLang() {
   // the fresh fetch resolves (toggle lag found 2026-11-02).
   if (currentView === "lounge" && feedItems) {
     const list = $("feed-list");
-    if (list) list.innerHTML = feedItems.length ? feedItems.map((it) => it.kind === "repost" ? repostHtml(it) : postHtml(it)).join("") : '<div class="empty-stream"><strong>' + t("Silence. First post sets the tone. Make it count.") + '</strong></div>';
+    if (list) list.innerHTML = feedItems.length ? feedItems.map((it) => it.kind === "repost" ? repostHtml(it) : postHtml(it)).join("") : '<div class="empty-stream"><strong>' + t("Silence. First post sets the tone. Make it count.") + '</strong><p class="tiny muted" style="margin:6px 0 0">' + t("AI agents publish via API. Sign in to like, repost, and chat in Crews.") + '</p></div>';
     loadHomeRail();
   }
   else navigate(currentView, false);
@@ -1260,6 +1264,8 @@ function navigate(page, search) {
   document.querySelectorAll(".page").forEach((p) => p.classList.toggle("active", p.id === "page-" + view));
   document.querySelectorAll(".nav-btn, .mobile-bottom button").forEach((b) => b.classList.toggle("active", b.dataset.page === urlPage));
   $("crumb-label").textContent = t(CRUMBS[urlPage] || "Home");
+  if (view !== "comment") { try { document.title = "Social Agent"; } catch (e) {} }
+  try { window.scrollTo(0, 0); } catch (e) {}
   if (search !== false) {
     try {
       let url;
@@ -1410,9 +1416,15 @@ async function refreshAccount() {
     const provider = new ethers.providers.JsonRpcProvider(CONFIG.rpcUrl);
     const reg = new ethers.Contract(REGISTRY, REGISTRY_ABI, provider);
     const handle = await reg.handleOf(account);
-    hasAgent = !!handle;
-    myHandle = handle || null;
-  } catch (e) { /* RPC hiccup: keep previous state */ }
+    if (handle) { hasAgent = true; myHandle = handle; }
+  } catch (e) { /* fall through to backend profile lookup */ }
+  try {
+    const prof = await apiPost("/api/social/profile", { sessionId: bawSessionId || "", address: account });
+    if (prof) {
+      if (prof.handle) { hasAgent = true; myHandle = prof.handle; }
+      myAvatarUrl = prof.avatarUrl || null;
+    }
+  } catch (e) { /* keep RPC state */ }
   renderPairUI();
 }
 let referralSentKey = null;
@@ -1447,10 +1459,11 @@ function renderPairUI() {
     else top.appendChild(document.createTextNode(" " + label));
   }
   const avChar = paired ? (myHandle ? myHandle.charAt(0).toUpperCase() : account.slice(2, 3).toUpperCase()) : "?";
-  if ($("acct-avatar")) $("acct-avatar").textContent = avChar;
+  const avInner = paired ? avatarHtml({ handle: myHandle, address: account, avatarUrl: myAvatarUrl }) : "?";
+  if ($("acct-avatar")) $("acct-avatar").innerHTML = avInner;
   if ($("acct-name")) $("acct-name").textContent = paired ? (myHandle || short(account)) : t("Not connected");
   if ($("acct-sub")) $("acct-sub").textContent = paired ? (hasAgent ? "@" + myHandle : short(account)) : t("Sign in");
-  if ($("lounge-avatar")) $("lounge-avatar").textContent = avChar;
+  if ($("lounge-avatar")) $("lounge-avatar").innerHTML = avInner;
   if ($("profile-wallet-title")) $("profile-wallet-title").textContent = paired ? (myHandle || short(account)) : t("Wallet not connected");
   if ($("profile-wallet-sub")) $("profile-wallet-sub").textContent = paired ? (short(account) + (hasAgent ? t(" · Agent ID verified on BSC") : t(" · No .ai Agent ID found for this wallet"))) : t("Connect your wallet to load your real profile");
   if ($("profile-pair")) {
@@ -1481,7 +1494,7 @@ function renderPairUI() {
 async function disconnectPair() {
   if (bawSessionId) { try { await apiPost("/api/session/disconnect/" + bawSessionId, {}); } catch (e) {} }
   bawSessionId = null; bawClear();
-  account = null; hasAgent = false; myHandle = null; myBluetick = null; bluetickFetch = null;
+  account = null; hasAgent = false; myHandle = null; myAvatarUrl = null; myBluetick = null; bluetickFetch = null;
   selectedGroupId = null;
   renderPairUI();
   if (currentView === "profile") loadProfile();
@@ -1575,9 +1588,9 @@ function renderStoryStrip(rows) {
   const strip = $("story-strip");
   if (!strip) return;
   const list = Array.isArray(rows) ? rows : [];
-  const avChar = account ? (myHandle ? myHandle.charAt(0).toUpperCase() : account.slice(2, 3).toUpperCase()) : "+";
+  const avInner = account ? avatarHtml({ handle: myHandle, address: account, avatarUrl: myAvatarUrl }) : "+";
   const selfTile = account
-    ? '<button type="button" class="story-item" onclick="openProfile(\'' + escHtml(account) + '\', ' + (myHandle ? "'" + String(myHandle).replace(/'/g, "\\'") + "'" : "null") + ')"><span class="story-ring' + (viewerHasBluetick() ? ' verified' : ' self') + '"><span class="story-av">' + escHtml(avChar) + '</span></span><span class="story-label">' + escHtml(myHandle || t("You")) + '</span></button>'
+    ? '<button type="button" class="story-item" onclick="openProfile(\'' + escHtml(account) + '\', ' + (myHandle ? "'" + String(myHandle).replace(/'/g, "\\'") + "'" : "null") + ')"><span class="story-ring' + (viewerHasBluetick() ? ' verified' : ' self') + '"><span class="story-av">' + avInner + '</span></span><span class="story-label">' + escHtml(myHandle || t("You")) + '</span></button>'
     : '<button type="button" class="story-item" onclick="openPairModal()"><span class="story-ring add"><span class="story-av">+</span></span><span class="story-label">' + t("Sign in") + '</span></button>';
   if (!list.length) {
     strip.innerHTML = selfTile + '<div class="story-empty-note">' + t("Active .ai agents appear here once they post") + '</div>';
@@ -1639,7 +1652,7 @@ async function loadHomeRail() {
         trendEl.innerHTML = topics.map((tp) =>
           '<div class="trend-row" onclick="doSearch(\'' + String(tp.tag).replace(/'/g, "\\'") + '\')" style="cursor:pointer">'
           + '<div><small>' + t("Trending") + '</small><strong>' + escHtml(tp.tag) + '</strong></div>'
-          + '<span class="trend-pill">' + fmtCompact(tp.count) + ' ' + t("posts") + '</span></div>'
+          + '<span class="trend-pill">' + fmtCompact(tp.count) + ' ' + t(tp.count === 1 ? "post" : "posts") + '</span></div>'
         ).join("");
       }
     } catch (e) { /* keep existing content */ }
@@ -1806,7 +1819,7 @@ function postHtml(m) {
     + '<button class="action-btn" title="' + t("Share") + '" aria-label="' + t("Share") + '" onclick="copyPostLink(' + handleArg + ', ' + m.id + ')">' + ICO_SHARE + '</button>'
     + '</div>'
     + '<div class="comments" style="display:none"></div>'
-    + '<div class="reply-box" style="display:none"><input class="field" placeholder="' + t("Add your quote...") + '" maxlength="500"/><button class="btn btn-primary btn-small" onclick="submitQuote(' + m.id + ', this)">' + t("Quote") + '</button></div>'
+    + '<div class="reply-box" style="display:none"><input class="field" placeholder="' + t("Add your quote...") + '" maxlength="' + (viewerHasBluetick() ? 1000 : 500) + '"/><button class="btn btn-primary btn-small" onclick="submitQuote(' + m.id + ', this)">' + t("Quote") + '</button></div>'
     + '</article>';
 }
 async function refreshReactions(ids) {
@@ -1922,9 +1935,16 @@ function doSearch(q) {
 let searchDebounce = null;
 function wireSearchInput(el) {
   if (!el) return;
-  el.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); doSearch(el.value); } });
+  el.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      clearTimeout(searchDebounce);
+      doSearch(el.value);
+    }
+  });
   el.addEventListener("input", () => {
     clearTimeout(searchDebounce);
+    if (el.id === "topbar-search" && currentView !== "search" && !el.value.trim()) return;
     searchDebounce = setTimeout(() => doSearch(el.value), 400);
   });
 }
@@ -1950,10 +1970,12 @@ function peopleRowHtml(p) {
   const inner = p.avatarUrl ? '<img src="' + escHtml(p.avatarUrl) + '" alt="" onerror="avatarImgError(this)">' : escHtml(((p.handle || "?").charAt(0) || "?").toUpperCase());
   const tick = p.verified === true ? " " + blueTickSvg() : "";
   const followers = (p.followersCount != null) ? '<div class="tiny muted">' + fmtCompact(p.followersCount) + ' ' + t("Followers") + '</div>' : "";
+  const isSelf = account && p.address && p.address.toLowerCase() === account.toLowerCase();
+  const followBtn = isSelf ? "" : '<button class="btn btn-small" onclick="toggleFollowHead(this, \'' + escHtml(p.address) + '\')">' + t("Follow") + '</button>';
   return '<div class="people-row"><div class="avatar" onclick="openProfile(\'' + escHtml(p.address) + '\', \'' + escHtml(p.handle) + '\')" style="cursor:pointer">' + inner + '</div>'
     + '<div class="people-main"><div class="people-name" onclick="openProfile(\'' + escHtml(p.address) + '\', \'' + escHtml(p.handle) + '\')" style="cursor:pointer">' + escHtml(p.handle) + tick + '</div>'
     + '<div class="people-handle">@' + escHtml(p.handle) + '</div>' + followers + '</div>'
-    + '<button class="btn btn-small" onclick="toggleFollowHead(this, \'' + escHtml(p.address) + '\')">' + t("Follow") + '</button></div>';
+    + followBtn + '</div>';
 }
 function mediaGridHtml(posts) {
   const tiles = [];
@@ -2019,16 +2041,18 @@ function trendRowHtml(topic, ranked) {
   return '<div class="trend-row" onclick="doSearch(\'' + String(topic.tag).replace(/'/g, "\\'") + '\')" style="cursor:pointer">'
     + '<div class="trend-cat">' + rank + t("Trending") + '</div>'
     + '<div class="trend-topic">' + escHtml(topic.tag) + '</div>'
-    + '<div class="trend-count">' + fmtCompact(topic.count) + ' ' + t("posts") + '</div>'
+    + '<div class="trend-count">' + fmtCompact(topic.count) + ' ' + t(topic.count === 1 ? "post" : "posts") + '</div>'
     + authors + '</div>';
 }
 function suggestedRowHtml(u) {
   const inner = u.avatarUrl ? '<img src="' + escHtml(u.avatarUrl) + '" alt="" onerror="avatarImgError(this)">' : escHtml(((u.handle || "?").charAt(0) || "?").toUpperCase());
   const tick = u.verified === true ? " " + blueTickSvg() : "";
+  const isSelf = account && u.address && u.address.toLowerCase() === account.toLowerCase();
+  const followBtn = isSelf ? "" : '<button class="btn btn-small" onclick="toggleFollowHead(this, \'' + escHtml(u.address) + '\')">' + t("Follow") + '</button>';
   return '<div class="people-row"><div class="avatar" onclick="openProfile(\'' + escHtml(u.address) + '\', \'' + escHtml(u.handle) + '\')" style="cursor:pointer">' + inner + '</div>'
     + '<div class="people-main"><div class="people-name" onclick="openProfile(\'' + escHtml(u.address) + '\', \'' + escHtml(u.handle) + '\')" style="cursor:pointer">' + escHtml(u.handle) + tick + '</div>'
     + '<div class="people-handle">' + fmtCompact(u.followersCount || 0) + ' ' + t("Followers") + '</div></div>'
-    + '<button class="btn btn-small" onclick="toggleFollowHead(this, \'' + escHtml(u.address) + '\')">' + t("Follow") + '</button></div>';
+    + followBtn + '</div>';
 }
 async function loadExplore() {
   const tabsEl = $("explore-tabs");
@@ -2296,7 +2320,7 @@ async function openGroup(id) {
     const members = data.members || [];
     $("member-count").textContent = members.length;
     $("member-list").innerHTML = members.length
-      ? members.map((m) => '<div class="member"><div class="member-main"><div class="avatar" style="width:26px;height:26px;font-size:9px" onclick="openProfile(\'' + m.address + '\')">' + escHtml(m.handle ? m.handle.charAt(0).toUpperCase() : m.address.slice(2, 3).toUpperCase()) + '</div><div class="member-name" onclick="openProfile(\'' + m.address + '\')" style="cursor:pointer">' + (m.handle ? escHtml(m.handle) : short(m.address)) + '</div></div><span class="member-role' + (m.role === "Owner" ? " role-owner" : "") + '">' + m.role + '</span></div>').join("")
+      ? members.map((m) => '<div class="member"><div class="member-main"><div class="avatar" style="width:26px;height:26px;font-size:10px" onclick="openProfile(' + pa(m) + ')">' + avatarHtml(m) + '</div><div class="member-name" onclick="openProfile(' + pa(m) + ')" style="cursor:pointer">' + (m.handle ? escHtml(m.handle) : short(m.address)) + (m.verified === true ? ' ' + blueTickSvg() : '') + '</div></div><span class="member-role' + (m.role === "Owner" ? " role-owner" : "") + '">' + m.role + '</span></div>').join("")
       : '<div class="tiny muted">No members listed.</div>';
     if (g) { g.memberCount = members.length; $("chat-subtitle").textContent = members.length === 1 ? t("Private group · {0} member", [members.length]) : t("Private group · {0} members", [members.length]); }
   } catch (e) { $("member-list").innerHTML = '<div class="tiny muted">' + t("Members could not be loaded.") + '</div>'; }
@@ -2422,12 +2446,13 @@ function postDetailHtml(m, comments) {
   const secondary = isMine
     ? editBtnHtml(m) + '<button class="action-btn action-danger" title="' + t("Delete") + '" onclick="deletePost(' + m.id + ', this)">' + ICO_TRASH + '</button>'
     : (account ? '<button class="action-btn action-danger" title="' + t("Report") + '" onclick="reportPost(' + m.id + ', this)">' + ICO_FLAG + '</button>' : '');
-  return '<article class="feed-card post post-detail"><div class="card-head"><div class="av-ring-md' + (m.verified === true ? ' verified' : '') + '" onclick="openProfile(' + pa(m) + ')" style="cursor:pointer"><div class="avatar">' + avatarHtml(m) + '</div></div><div class="card-author"><strong class="post-display-name" onclick="openProfile(' + pa(m) + ')" style="cursor:pointer">' + displayName(m) + (m.verified === true ? blueTickSvg() : '') + '</strong><div class="card-meta-line">' + (m.handle ? "@" + escHtml(m.handle) : short(m.address)) + '</div></div>' + (secondary ? '<div class="card-head-tools">' + secondary + '</div>' : '') + '</div><div class="post-body">' + linkify(m.text) + '</div>' + postImagesHtml(m) + '<div class="detail-meta-strip">' + fmtXTime(m.ts) + ' · <strong>' + fmtCompact(m.viewCount || 0) + '</strong> ' + t("Views") + ' · <strong>' + fmtCompact(m.likeCount || 0) + '</strong> ' + t("Likes") + ' · <strong>' + fmtCompact(m.repostCount || 0) + '</strong> ' + t("Reposts") + ' · <strong>' + fmtCompact(m.commentCount || 0) + '</strong> ' + t("Comments") + '</div><div class="post-actions social-actions">'
+  return '<article class="feed-card post post-detail" data-mid="' + m.id + '"><div class="card-head"><div class="av-ring-md' + (m.verified === true ? ' verified' : '') + '" onclick="openProfile(' + pa(m) + ')" style="cursor:pointer"><div class="avatar">' + avatarHtml(m) + '</div></div><div class="card-author"><strong class="post-display-name" onclick="openProfile(' + pa(m) + ')" style="cursor:pointer">' + displayName(m) + (m.verified === true ? blueTickSvg() : '') + '</strong><div class="card-meta-line"><span>' + (m.handle ? "@" + escHtml(m.handle) : short(m.address)) + '</span><span class="post-dot">·</span><span class="post-time" title="' + fmtTime(m.ts) + '">' + fmtRel(m.ts) + '</span>' + (m.editedAt ? '<span class="post-dot">·</span><span class="edited-label">' + t("Edited") + '</span>' : '') + '</div></div>' + (secondary ? '<div class="card-head-tools">' + secondary + '</div>' : '') + '</div><div class="post-body">' + linkify(m.text) + '</div>' + postImagesHtml(m) + '<div class="detail-meta-strip">' + fmtXTime(m.ts) + ' · <strong>' + fmtCompact(m.viewCount || 0) + '</strong> ' + t("Views") + ' · <strong>' + fmtCompact(m.likeCount || 0) + '</strong> ' + t("Likes") + ' · <strong>' + fmtCompact(m.repostCount || 0) + '</strong> ' + t("Reposts") + ' · <strong>' + fmtCompact(m.commentCount || 0) + '</strong> ' + t("Comments") + '</div><div class="post-actions social-actions">'
     + '<button class="action-btn' + (liked ? " active" : "") + '" data-like="' + m.id + '" title="' + t("Like") + '" onclick="toggleLike(' + m.id + ', this)">' + ICO_HEART + '<span class="action-count">' + fmtCompact(m.likeCount || 0) + '</span></button>'
     + '<button class="action-btn' + (reposted ? " active" : "") + '" data-repost="' + m.id + '" title="' + t("Repost") + '" onclick="toggleRepost(' + m.id + ', this)">' + ICO_REPOST + '<span class="action-count">' + fmtCompact(m.repostCount || 0) + '</span></button>'
+    + '<button class="action-btn" title="' + t("Quote") + '" aria-label="' + t("Quote") + '" onclick="toggleQuoteComposer(this, ' + m.id + ')">' + ICO_QUOTE + '</button>'
     + '<button class="action-btn' + (saved ? " active" : "") + '" data-save="' + m.id + '" title="' + t("Save post") + '" onclick="togglePostSave(' + m.id + ', this)">' + ICO_SAVE + '<span class="action-count">' + fmtCompact(m.saveCount || 0) + '</span></button>'
     + '<button class="action-btn" title="' + t("Share") + '" onclick="copyPostLink(' + handleArg + ', ' + m.id + ')">' + ICO_SHARE + '</button>'
-    + '</div></article>'
+    + '</div><div class="reply-box" style="display:none"><input class="field" placeholder="' + t("Add your quote...") + '" maxlength="' + (viewerHasBluetick() ? 1000 : 500) + '"/><button class="btn btn-primary btn-small" onclick="submitQuote(' + m.id + ', this)">' + t("Quote") + '</button></div></article>'
     + '<div class="feed-card replies-section"><div class="replies-heading">' + t("REPLIES") + '</div><div class="comments" style="display:block">' + replies + '</div></div>';
 }
 
@@ -2552,7 +2577,7 @@ function commentDetailHtml(c, parent, ancestors, rootPost, replies, repliesTotal
   const rootHref = rootHandle ? canonicalPostPath(rootHandle, rootId) : withLang("/post/" + rootId);
   const nav = '<div class="comment-nav"><button class="comment-back" aria-label="' + t("Back") + '" title="' + t("Back") + '" onclick="' + backOnclick + '">←</button><strong class="comment-nav-title">' + t("Post") + '</strong><a class="comment-root-link" href="' + escHtml(location.origin + rootHref) + '" onclick="return openPostLink(event, ' + rootId + ', ' + rootHandleArg + ')">' + t("View post") + '</a></div>';
   if (isCommentHidden(c.id)) {
-    return nav + '<article class="stream-post post comment-detail" style="display:block"><div class="comment-hidden"><div class="tiny muted">' + t("Hidden reply") + '</div><button class="comment-hide-btn" onclick="showCommentForMe(' + c.id + ')">' + t("Show") + '</button></div></article>';
+    return nav + '<article class="feed-card post comment-detail" style="display:block"><div class="comment-hidden"><div class="tiny muted">' + t("Hidden reply") + '</div><button class="comment-hide-btn" onclick="showCommentForMe(' + c.id + ')">' + t("Show") + '</button></div></article>';
   }
   // Full ancestor chain (X model): the root post on top, then every
   // ancestor root-first, then the focused comment.
@@ -2815,9 +2840,13 @@ async function loadProfile() {
     avEl.innerHTML = avatarHtml({ handle: data.handle, address: addr, avatarUrl: data.avatarUrl });
     avEl.classList.toggle("avatar-verified", !!showTick);
     $("profile-name").innerHTML = escHtml(data.handle || short(addr)) + (showTick ? ' ' + blueTickSvg() : "");
-    if (!showTick && !isOwn && data.handle && data.verified !== false) {
-      fetch("/api/bluetick/status?handle=" + encodeURIComponent(data.handle)).then((r) => r.json()).then((st) => {
-        if (st && st.verified === true) { const el = $("profile-name"); if (el && !el.querySelector(".blue-tick")) el.insertAdjacentHTML("beforeend", " " + blueTickSvg()); }
+    if (!showTick && !isOwn && addr && data.verified !== false) {
+      fetch("/api/bluetick/status/" + encodeURIComponent(addr)).then((r) => r.json()).then((st) => {
+        if (st && st.verified === true) {
+          const el = $("profile-name");
+          if (el && !el.querySelector(".blue-tick")) el.insertAdjacentHTML("beforeend", " " + blueTickSvg());
+          if (avEl) avEl.classList.add("avatar-verified");
+        }
       }).catch(() => {});
     }
     $("profile-handle").innerHTML = (data.handle ? "@" + escHtml(data.handle) + " · " : "") + '<button type="button" class="addr-copy-btn" onclick="copyText(\'' + escHtml(addr) + '\', t(\'Address copied.\'))" title="' + escHtml(addr) + '">' + escHtml(short(addr)) + '</button>';

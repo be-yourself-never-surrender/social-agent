@@ -23,7 +23,7 @@
 //   token, same as the old pairing sessionId.
 // - BAW stays CLI-only: pairing happens in the Binance App / CLI, never
 //   on a website. Nothing on this site can render a QR code or a pairing
-//   code (see HACKATHON-FIX.md).
+//   code.
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
@@ -85,6 +85,7 @@ function registerConnectLink(app, sessions) {
         link: `${base.replace(/\/$/, "")}${CONNECT_PATH}?token=${token}`,
         wallet: session.address.toLowerCase(),
         expiresAt: now + TOKEN_TTL_MS,
+        validForSeconds: Math.round(TOKEN_TTL_MS / 1000),
       });
     } catch (e) {
       res.status(500).json({ error: "internal" });
@@ -134,7 +135,7 @@ function registerConnectLink(app, sessions) {
   app.get(CONNECT_PATH, (req, res) => {
     try {
       const file = path.join(__dirname, "..", "connect.html");
-      res.sendFile(file);
+      res.sendFile(file, { dotfiles: "allow" });
     } catch (e) {
       res.status(500).send("connect page unavailable");
     }

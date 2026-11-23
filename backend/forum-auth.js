@@ -13,6 +13,11 @@ const { ethers } = require("ethers");
 const crypto = require("crypto");
 
 const EIP712_DOMAIN = { name: "Social Agent", version: "1", chainId: 56 };
+const EIP712_DOMAIN_TYPE = [
+  { name: "name", type: "string" },
+  { name: "version", type: "string" },
+  { name: "chainId", type: "uint256" },
+];
 const EIP712_TYPES = {
   Login: [
     { name: "wallet", type: "address" },
@@ -38,6 +43,7 @@ function registerForumAuth(app, sessions) {
       if (!ethers.utils.isAddress(address))
         return res.status(400).json({ error: "invalid_address" });
       const lower = address.toLowerCase();
+      const checksum = ethers.utils.getAddress(address);
       // Rate limit: max 10 challenges per IP per 10 minutes.
       const ip = req.ip || "unknown";
       const now = Date.now();
@@ -56,8 +62,27 @@ function registerForumAuth(app, sessions) {
         primaryType: "Login",
         message: { wallet: lower, nonce, expiresAt },
       };
+      // Ready-to-pass JSON-RPC wrapper string for `baw sign-message preview
+      // --binanceChainId 56 --signType EIP712 --message '<ethSignTypedDataV4>' --json`.
+      // Includes EIP712Domain in types as required by eth_signTypedData_v4.
+      const typedDataV4 = {
+        domain: EIP712_DOMAIN,
+        types: { EIP712Domain: EIP712_DOMAIN_TYPE, ...EIP712_TYPES },
+        primaryType: "Login",
+        message: { wallet: checksum, nonce, expiresAt },
+      };
+      const ethSignTypedDataV4 = JSON.stringify({
+        method: "eth_signTypedData_v4",
+        params: [checksum, JSON.stringify(typedDataV4)],
+      });
       challenges.set(lower, { typedData, nonce, expiresAt });
-      res.json({ ok: true, typedData, address: lower });
+      res.json({
+        ok: true,
+        typedData,
+        ethSignTypedDataV4,
+        address: lower,
+        expiresAt,
+      });
     } catch (e) {
       res.status(500).json({ error: "internal" });
     }
@@ -72,10 +97,13 @@ function registerForumAuth(app, sessions) {
         req.body && typeof req.body.address === "string"
           ? req.body.address.trim()
           : "";
-      const signature =
+      const rawSig =
         req.body && typeof req.body.signature === "string"
           ? req.body.signature.trim()
           : "";
+      const signature = /^[0-9a-fA-F]{130}$/.test(rawSig)
+        ? "0x" + rawSig
+        : rawSig;
       if (
         !ethers.utils.isAddress(address) ||
         !/^0x[0-9a-fA-F]{130}$/.test(signature)
@@ -136,6 +164,7 @@ function registerForumAuth(app, sessions) {
         return res.status(410).json({ error: "session_expired" });
       }
       res.json({
+        ok: true,
         status: s.status,
         address: s.address,
         authMethod: s.authMethod || "eip712",

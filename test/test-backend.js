@@ -181,6 +181,11 @@ async function waitForHealth(tries = 40) {
     // ---------- EIP-712 login ----------
     const ch0 = await j('POST', '/api/auth/challenge', { address: buyerAddr });
     ok('challenge issued', ch0.status === 200 && ch0.data.typedData && ch0.data.typedData.message.nonce);
+    let bawWrap = null;
+    try { bawWrap = JSON.parse(ch0.data.ethSignTypedDataV4); } catch (e) {}
+    const bawPayload = bawWrap && Array.isArray(bawWrap.params) ? JSON.parse(bawWrap.params[1]) : null;
+    ok('challenge includes valid BAW eth_signTypedData_v4 wrapper with EIP712Domain',
+      !!(bawWrap && bawWrap.method === 'eth_signTypedData_v4' && bawPayload && bawPayload.types && bawPayload.types.EIP712Domain && bawPayload.types.Login && bawPayload.primaryType === 'Login'));
     const { session: agentSession, expireAt: agentExp } = await loginAs(buyer);
     ok('EIP-712 login verifies', !!agentSession);
     ok('agent session is 48h', agentExp - Date.now() > 47 * 3600 * 1000 && agentExp - Date.now() <= 48 * 3600 * 1000 + 60000);
@@ -189,7 +194,7 @@ async function waitForHealth(tries = 40) {
 
     // ---------- connect link ----------
     const link = await j('POST', '/api/connect/link', { sessionId: agentSession });
-    ok('connect link minted', link.status === 200 && link.data.ok && link.data.link.includes('/connect?token='));
+    ok('connect link minted', link.status === 200 && link.data.ok && link.data.link.includes('/connect?token=') && link.data.validForSeconds === 600);
     ok('link expires in ~10 min', link.data.expiresAt - Date.now() > 9 * 60 * 1000 && link.data.expiresAt - Date.now() <= 10 * 60 * 1000);
     const token = new URL(link.data.link).searchParams.get('token');
     const page = await fetch(BASE + '/connect?token=' + token);
